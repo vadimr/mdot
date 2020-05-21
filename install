@@ -1,0 +1,21 @@
+#!/bin/bash
+
+set -e
+
+bakdir=`mktemp -d /tmp/dotfiles_bak.XXXXX`
+
+for f in $(cd df && find . -type f); do
+  d="$(dirname "$f")"
+
+  mkdir -p "$bakdir/$d"
+  [[ -f "$HOME/$f" ]] && cp "$HOME/$f" "$bakdir/$f"
+
+  mkdir -p "$HOME/$d"
+  cp "df/$f" "$HOME/$f"
+done
+
+mkdir -p ~/.vim/autoload
+cp plug.vim ~/.vim/autoload
+vim -c "PlugInstall" -c "quitall"
+
+echo "Backup: $bakdir"

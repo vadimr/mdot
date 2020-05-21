@@ -1,0 +1,8 @@
+#!/bin/bash
+
+PPATH="$1"
+ACTIVE="$2"
+
+PRETTY_PATH=$(sed "s:^$HOME:~:" <<< $PPATH)
+
+echo " $PRETTY_PATH "
