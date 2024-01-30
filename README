@@ -1,0 +1,9 @@
+DOTFILES
+
+~ How to install?
+
+  run `./install`
+
+~ What do I need?
+
+  m4, git, vim
