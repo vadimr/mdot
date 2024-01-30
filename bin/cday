@@ -1,0 +1,40 @@
+#!/bin/bash
+
+while getopts 'f:cp' opt; do
+  case "$opt" in
+    f)
+      fn="$OPTARG"
+      ;;
+    c)
+      cal=true
+      ;;
+    p)
+      printdir=true
+      ;;
+  esac
+done
+shift "$(($OPTIND -1))"
+
+if [[ "$printdir" != true ]] && [[ -z "$fn" ]]; then
+    echo "fn required" >&2
+    exit 1
+fi
+
+if [[ "$cal" = true ]]; then
+    zd=$(zenity --calendar)
+    if [[ $? -ne 0 ]]; then
+        exit 1
+    fi
+    cald=$(date --date="$zd" +%Y/%m_%b/%d)
+else
+    cald=$(date +%Y/%m_%b/%d)
+fi
+
+d=$(cd ~/org/cal && mkdir -p "$cald" && echo "$PWD/$cald")
+
+if [[ "$printdir" = true ]]; then
+    echo "$d"
+    exit 0
+fi
+
+cd ~/org && vim "$d/$fn"

@@ -1,0 +1,39 @@
+#!/bin/bash
+
+ORG="$HOME/org"
+
+def(){ echo "$1|$2"; }
+chdir(){ def "$1" "cd \"$2\""; }
+opn(){ def "$1" "setsid -f xdg-open \"$2\" >/dev/null 2>&1"; }
+clip(){ def "cp $1" "echo -ne \"$2\" | setsid -f xclip -sel c"; }
+
+chdiropn(){
+    chdir "$1" "$2"
+    opn "$1 (open)" "$2"
+}
+
+chdir "org" "$ORG"
+chdiropn "home" "$HOME"
+
+def "p" "clear; python3 -i -q -c 'import numpy as np'"
+
+chdir "tf" "$HOME/tf"
+
+def "cday" "cd \$(cday -p)"
+def "cday d" "cday -f d.txt"
+def "cday d cal" "cday -c -f d.txt"
+
+# feed prepend
+def "fp" "vim '+normal! O$ ' '+start!' $ORG/refs/feed.txt"
+
+googtr(){ opn "$1" "https://translate.google.com/#view=home&op=translate&sl=$2&tl=$3"; }
+googtr "enru" "en" "ru"
+googtr "ruen" "ru" "en"
+
+clip "password" "\$(openssl rand -base64 16)"
+clip "date readable" "\$(date \"+%a %b %d %Y\")"
+clip "date m/d/y" "\$(date \"+%D\")"
+clip "datetime" "\$(date \"+%a %b %d %Y %l:%M %p\")"
+clip "datetime filename" "\$(date +%Y-%m-%d-%H-%M-%S)"
+
+clip "lorem" "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."

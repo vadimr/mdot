@@ -1,0 +1,56 @@
+#!/bin/bash
+
+[[ $_ != $0 ]] && __znav_sourced=1
+
+__znav_rcfn="$HOME/org/dot/znavrc"
+[[ -n "$1" ]] && __znav_rcfn="$1"
+
+__znav_eval(){
+    local cmd="$@"
+    if [[ $__znav_sourced ]]; then
+        eval "$cmd"
+        return
+    fi
+
+    # If cmd begins with "cd" we start a new session.
+    # Start with space to avoid running a new session, like: def " cd fl && ./start"
+    if echo "$cmd" | grep "^cd " >/dev/null; then
+        bash -c "$cmd; exec bash"
+    else
+        bash -c "$cmd"
+    fi
+}
+
+__znav(){
+    local org="$HOME/org"
+
+    local rc=$(bash "$__znav_rcfn")
+
+    local pick=$((cd "$org" && echo "$rc" | grep . | cut -d'|' -f1; fdfind) | fzf --info hidden --layout reverse)
+    if [[ -z "$pick" ]]; then
+        return
+    fi
+
+    if echo "$rc" | grep "^$pick|" >/dev/null; then
+        __znav_eval "$(echo "$rc" | grep "^$pick|" | cut -d'|' -f 2-)"
+        return
+    fi
+
+    local f="$org/$pick"
+
+    if [[ -f "$f" ]]; then
+        if [[ $f == *.txt ]] || file -bi "$f" | grep "^text\/" >/dev/null; then
+            vim "$f"
+        else
+            setsid -f xdg-open "$f"
+        fi
+        return
+    fi
+
+    if [[ -d "$f" ]]; then
+        __znav_eval "cd \"$f\""
+    else
+        echo "Don't know what to do with file $f" >&2
+    fi
+}
+__znav
