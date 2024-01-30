@@ -2,20 +2,41 @@
 
 set -e
 
-bakdir=`mktemp -d /tmp/dotfiles_bak.XXXXX`
+if [[ "$OSTYPE" == *"darwin"* ]]; then
+	platform=OSX
+elif [[ "$OSTYPE" == *"linux"* ]]; then
+	platform=LINUX
+else
+	echo "The OS type is not supported: $OSTYPE" >&2
+	exit 1
+fi
 
-for f in $(cd df && find . -type f); do
+REPDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+if [[ ! $NOBK ]]; then
+	bakdir=`mktemp -d /tmp/dotfiles_bak.XXXXX`
+fi
+
+for f in $(cd dotfiles && find . -type f); do
   d="$(dirname "$f")"
 
-  mkdir -p "$bakdir/$d"
-  [[ -f "$HOME/$f" ]] && cp "$HOME/$f" "$bakdir/$f"
+  if [[ ! $NOBK ]]; then
+	  mkdir -p "$bakdir/$d"
+	  cp "dotfiles/$f" "$bakdir/$f"
+  fi
 
   mkdir -p "$HOME/$d"
-  cp "df/$f" "$HOME/$f"
+  if grep -q  __m4__ "dotfiles/$f"; then
+    m4 -D$platform -DREPDIR="$REPDIR" "dotfiles/$f" > "$HOME/$f"
+  else
+    cp "dotfiles/$f" "$HOME/$f"
+  fi
 done
 
 mkdir -p ~/.vim/autoload
-cp plug.vim ~/.vim/autoload
+cp vim/plug.vim ~/.vim/autoload
 vim -c "PlugInstall" -c "quitall"
 
-echo "Backup: $bakdir"
+if [[ ! $NOBK ]]; then
+	echo "Backup created: $bakdir"
+fi
