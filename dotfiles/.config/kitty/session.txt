@@ -1,0 +1,2 @@
+cd ~
+launch bash -lc "tmux"
