@@ -1,0 +1,9 @@
+[user]
+	name = set name
+	email = set email
+[core]
+	excludesfile = ~/.gitignore
+[push]
+	default = simple
+[color]
+	ui = auto

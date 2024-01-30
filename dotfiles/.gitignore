@@ -1,0 +1,6 @@
+# __m4__
+
+ifdef(`OSX',`dnl
+.DS_Store
+')dnl
+tags
