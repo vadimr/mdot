@@ -4,8 +4,8 @@ ORG="$HOME/org"
 
 def(){ echo "$1|$2"; }
 chdir(){ def "$1" "cd \"$2\""; }
-opn(){ def "$1" "setsid -f xdg-open \"$2\" >/dev/null 2>&1"; }
-clip(){ def "cp $1" "echo -ne \"$2\" | setsid -f xclip -sel c"; }
+opn(){ def "$1" "open \"$2\""; }
+clip(){ def "cp $1" "echo -ne \"$2\" | pbcopy"; }
 
 chdiropn(){
     chdir "$1" "$2"

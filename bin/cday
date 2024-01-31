@@ -25,7 +25,8 @@ if [[ "$cal" = true ]]; then
     if [[ $? -ne 0 ]]; then
         exit 1
     fi
-    cald=$(date --date="$zd" +%Y/%m_%b/%d)
+    # osx specific
+    cald=$(date -j -f "%m/%d/%Y" "$zd" "+%Y/%m_%b/%d")
 else
     cald=$(date +%Y/%m_%b/%d)
 fi

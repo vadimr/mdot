@@ -26,7 +26,7 @@ __znav(){
 
     local rc=$(bash "$__znav_rcfn")
 
-    local pick=$((cd "$org" && echo "$rc" | grep . | cut -d'|' -f1; fdfind) | fzf --info hidden --layout reverse)
+    local pick=$((cd "$org" && echo "$rc" | grep . | cut -d'|' -f1; fd) | fzf --info hidden --layout reverse)
     if [[ -z "$pick" ]]; then
         return
     fi
@@ -42,7 +42,7 @@ __znav(){
         if [[ $f == *.txt ]] || file -bi "$f" | grep "^text\/" >/dev/null; then
             vim "$f"
         else
-            setsid -f xdg-open "$f"
+            open "$f"
         fi
         return
     fi
